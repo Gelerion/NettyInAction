@@ -51,7 +51,6 @@ sql/docs
 sql/site
 lib_managed/
 lint-r-report.log
-log/
 logs/
 out/
 project/boot/
