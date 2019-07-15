@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+//https://mrhaki.blogspot.com/ - gradle godness
+group 'com.gelerion.netty'
+version '1.0-SNAPSHOT'
+
+/*
+sourceCompatibility is a way to declare which version of Java your source code is compatible with. 
+This has many implications, like telling the compiler which rules should apply to parse the code 
+(for instance, enum started to be a reserved keyword only in Java5+) or how the IDE that integrates with your 
+Gradle script should set up your project class path (for instance, if sourceCompatibility = 1.7, 
+it should bind your project to a Java 7 JRE).
+
+targetCompatibility, instead, is a way to declare which kind of byte code the compilation process should produce. 
+By default, if not specified, targetCompatibility=sourceCompatibility. If you specify a targetCompatibility lower 
+than sourceCompatibility, you’re trying to do something interesting in theory, but risky in practice, because either 
+at compile time or just at runtime you may incur in “class not found” errors due to class path mismatch between what 
+your source needs and what your compiler/runtime provides.
+ */
+sourceCompatibility = JavaVersion.VERSION_12
+targetCompatibility = JavaVersion.VERSION_12
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.netty:netty-all:4.1.36.Final'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+}

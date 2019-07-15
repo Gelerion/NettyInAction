@@ -1,0 +1,30 @@
+FreeBSD’s previous malloc(3) implementation by Kamp (1998), commonly referred to as phkmalloc,
+has long been considered one of the best available, and has fared well in published comparisons (Feng
+and Berger, 2005; Berger et al., 2000; Bohra and Gabber, 2001). However, it was designed at a time
+when multi-processor systems were rare, and support for multi-threading was spotty. The FreeBSD
+project is engaged in an ongoing effort to provide scalable performance on SMP systems, and has
+made sufficient progress that malloc(3) had become a scalability bottleneck for some multi-threaded
+applications. This paper presents a new malloc(3) implementation, informally referred to here as
+jemalloc.
+On the surface, memory allocation and deallocation appears to be a simple problem that merely requires a
+bit of bookkeeping in order to keep track of in-use versus available memory. However, decades
+of research and scores of allocator implementations have failed to produce a clearly superior allocator.
+In fact, the best known practices for measuring allocator performance are remarkably simplistic, as are
+the summary statistics for measured performance. Wilson et al. (1995) provide an excellent review of
+the state of the art as of a decade ago. Multi-processors were not a significant issue then, but otherwise
+the review provides a thorough summary of the issues that face modern allocators. Following are brief
+mentions of various issues that particularly impact jemalloc, but no attempt is made to discuss all of
+the issues that must be considered when designing an allocator.
+Allocator performance is typically measured via some combination of application execution time and
+average or peak application memory usage. It is not sufficient to measure the time consumed by the
+allocator code in isolation. Memory layout can have a significant impact on how quickly the rest of the
+application runs, due to the effects of CPU cache, RAM, and virtual memory paging. It is now commonly
+accepted that synthetic traces are not even adequate for measuring the effects of allocation policy on
+fragmentation (Wilson et al., 1995). The only definitive measures of allocator performance are attained
+by measuring the execution time and memory usage of real applications. This poses challenges when
+qualifying the performance characteristics of allocators. Consider that an allocator might perform very
+poorly for certain allocation patterns, but if none of the benchmarked applications manifest any such
+patterns, then the allocator may appear to perform well, despite pathological performance for some
+work loads. This makes testing with a wide variety of applications important. It also motivates an
+approach to allocator design that minimizes the number and severity of degenerate edge cases.
+Fragmentation can be thought of in terms of internal fragmentation and external fragment
